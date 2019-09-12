@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import 'SizeConfig.dart';
 
 class Book extends StatelessWidget {
+
+  String imagePath;
+
+  Book(imagePath){
+    this.imagePath = imagePath;
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -10,7 +17,7 @@ class Book extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.contain,
-          image: AssetImage("assets/bookcover.jpg"),
+          image: AssetImage(imagePath),
         ),
       ),
     );

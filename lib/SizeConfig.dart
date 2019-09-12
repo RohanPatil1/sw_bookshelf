@@ -27,19 +27,5 @@ class SizeConfig {
         _safeAreaHorizontal) / 100;
     safeBlockVertical = (screenHeight -
         _safeAreaVertical) / 100;
-
-
-
-    print("---------------SIZE CONFIG----------------------");
-    print("Screen Width : "+screenWidth.toString());
-    print("screenHeight : "+screenHeight.toString());
-    print("blockSizeHorizontal : "+blockSizeHorizontal.toString());
-    print("_safeAreaHorizontal ="+_safeAreaHorizontal.toString()+"="+_mediaQueryData.padding.left.toString() +"+"+
-        _mediaQueryData.padding.right.toString());
-    print("_safeAreaVertical ="+_safeAreaVertical.toString()+"="+_mediaQueryData.padding.top.toString() +"+"+
-        _mediaQueryData.padding.bottom.toString());
-    print("safeBlockHorizontal : "+safeBlockHorizontal.toString());
-    print("safeBlockVertical : "+safeBlockVertical.toString());
-    print("---------------SIZE CONFIG----------------------");
   }
 }
