@@ -1,30 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sw_bookshelf/SizeConfig.dart';
-import 'package:sw_bookshelf/Book.dart';
+import 'screen.dart';
 
 
-class Shelf extends StatefulWidget {
-
-  List<Map<String,String>> subdata;
-
-  Shelf(data){
-    subdata = data;
-  }
-
-
-  @override
-  bookShelf createState() => bookShelf(subdata);
-
-}
-
-
-class bookShelf extends State<Shelf> {
+class Shelf extends StatelessWidget {
 
   List<Map<String,String>> subData;
 
-  bookShelf(subdata){
-    subData = subdata;
+  Shelf(datalist){
+    subData = datalist;
   }
 
   @override
@@ -62,26 +47,19 @@ class bookShelf extends State<Shelf> {
                             //print(imgPaths);
                             return Container(
                               child: GestureDetector(
-                                child: Book(subData[index]['image']),
-                                onTap: () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      child: new CupertinoAlertDialog(
-                                        title: new Column(
-                                          children: <Widget>[
-                                            new Text("Subject: "+subData[index]['subName']),
-                                          ],
-                                        ),
-                                        content: new Text("Subject Code: "+subData[index]['subCode']),
-                                        actions: <Widget>[
-                                          new FlatButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: new Text("OK"))
-                                        ],
-                                      ));
+                                child: Container(
+                              decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.contain,
+                                image: AssetImage(subData[index]["image"]),
+                              ),
+                            ),
+                                ),
+                                onTap: ()  {
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>UI(
+                                    subject: subData[index]["subName"],
+                                    SubjectCode: subData[index]["subCode"],
+                                  )));
                                 },
                               ),
                             );
