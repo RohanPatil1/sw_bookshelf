@@ -1,161 +1,143 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sw_bookshelf/SizeConfig.dart';
-import 'package:sw_bookshelf/Book.dart';
+import 'package:provider/provider.dart';
+import 'screen.dart';
+import 'bookserver.dart';
 
-
-class Shelf extends StatefulWidget {
-
-  List<Map<String,String>> subdata;
-
-  Shelf(data){
-    subdata = data;
-  }
-
-
-  @override
-  bookShelf createState() => bookShelf(subdata);
-
-}
-
-
-class bookShelf extends State<Shelf> {
-
-  List<Map<String,String>> subData;
-
-  bookShelf(subdata){
-    subData = subdata;
-  }
-
+class Shelf extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final booksProvider = Provider.of<bookServer>(context, listen: true);
+
     SizeConfig().init(context);
-    if(subData!=null){
-      return Column(
-        children: <Widget>[
-          Row(
+
+    return (booksProvider.state == LoadingState.loading)
+        ? optionWidget()
+        : Column(
             children: <Widget>[
-              Container(
-                width: SizeConfig.safeBlockHorizontal * 3,
-                height: SizeConfig.blockSizeVertical * 22,
-                color: Colors.brown[800],
-              ),
-              Column(
+              Row(
                 children: <Widget>[
                   Container(
-                    width: SizeConfig.safeBlockHorizontal * 94,
-                    height: SizeConfig.blockSizeVertical * 21,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/background.jpeg")),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 56),
-                      child: GridView.builder(
-                          itemCount: 3,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing:
-                              SizeConfig.blockSizeHorizontal * 2),
-                          itemBuilder: (BuildContext context, int index) {
-                            //print(imgPaths);
-                            return Container(
-                              child: GestureDetector(
-                                child: Book(subData[index]['image']),
-                                onTap: () {
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      child: new CupertinoAlertDialog(
-                                        title: new Column(
-                                          children: <Widget>[
-                                            new Text("Subject: "+subData[index]['subName']),
-                                          ],
+                    width: SizeConfig.safeBlockHorizontal * 3,
+                    height: SizeConfig.blockSizeVertical * 22,
+                    color: Colors.brown[800],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        width: SizeConfig.safeBlockHorizontal * 94,
+                        height: SizeConfig.blockSizeVertical * 21,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage("assets/background.jpeg")),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 56),
+                          child: Consumer<bookServer>(
+                              builder: (context, bookserver, _) {
+                            return GridView.builder(
+                                itemCount: bookserver.dataList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        crossAxisSpacing:
+                                            SizeConfig.blockSizeHorizontal * 2),
+                                itemBuilder: (BuildContext context, int index) {
+                                  //print(imgPaths);
+                                  return Container(
+                                    child: GestureDetector(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            fit: BoxFit.contain,
+                                            image: AssetImage(bookserver
+                                                .dataList[index]["image"]),
+                                          ),
                                         ),
-                                        content: new Text("Subject Code: "+subData[index]['subCode']),
-                                        actions: <Widget>[
-                                          new FlatButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: new Text("OK"))
-                                        ],
-                                      ));
-                                },
-                              ),
-                            );
+                                      ),
+                                      onTap: () {
+                                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>UI(
+                                         subject: bookserver.dataList[index]["subName"],
+                                         SubjectCode: bookserver.dataList[index]["subCode"],
+                                       )));
+                                      },
+                                    ),
+                                  );
+                                });
                           }),
-                    ),
+                        ),
+                      ),
+                      Container(
+                        width: SizeConfig.safeBlockHorizontal * 94,
+                        height: SizeConfig.blockSizeVertical * 1,
+                        color: Colors.brown[800],
+                      ),
+                    ],
                   ),
                   Container(
-                    width: SizeConfig.safeBlockHorizontal * 94,
-                    height: SizeConfig.blockSizeVertical * 1,
+                    width: SizeConfig.safeBlockHorizontal * 3,
+                    height: SizeConfig.blockSizeVertical * 22,
                     color: Colors.brown[800],
                   ),
                 ],
               ),
               Container(
-                width: SizeConfig.safeBlockHorizontal * 3,
-                height: SizeConfig.blockSizeVertical * 22,
-                color: Colors.brown[800],
+                height: SizeConfig.blockSizeVertical * 2,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage("assets/background.jpeg")),
+                ),
               ),
             ],
-          ),
-          Container(
-            height: SizeConfig.blockSizeVertical * 2,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fill, image: AssetImage("assets/background.jpeg")),
+          );
+  }
+
+  Widget optionWidget() {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Container(
+              width: SizeConfig.safeBlockHorizontal * 3,
+              height: SizeConfig.blockSizeVertical * 22,
+              color: Colors.brown[800],
             ),
-          ),
-        ],
-      );
-    }
-    else{
-      return Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: SizeConfig.safeBlockHorizontal * 3,
-                height: SizeConfig.blockSizeVertical * 22,
-                color: Colors.brown[800],
-              ),
-              Column(
-                children: <Widget>[
-                  Container(
-                    width: SizeConfig.safeBlockHorizontal * 94,
-                    height: SizeConfig.blockSizeVertical * 21,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/background.jpeg")),
-                    ),
+            Column(
+              children: <Widget>[
+                Container(
+                  width: SizeConfig.safeBlockHorizontal * 94,
+                  height: SizeConfig.blockSizeVertical * 21,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/background.jpeg")),
                   ),
-                  Container(
-                    width: SizeConfig.safeBlockHorizontal * 94,
-                    height: SizeConfig.blockSizeVertical * 1,
-                    color: Colors.brown[800],
-                  ),
-                ],
-              ),
-              Container(
-                width: SizeConfig.safeBlockHorizontal * 3,
-                height: SizeConfig.blockSizeVertical * 22,
-                color: Colors.brown[800],
-              ),
-            ],
-          ),
-          Container(
-            height: SizeConfig.blockSizeVertical * 2,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fill, image: AssetImage("assets/background.jpeg")),
+                ),
+                Container(
+                  width: SizeConfig.safeBlockHorizontal * 94,
+                  height: SizeConfig.blockSizeVertical * 1,
+                  color: Colors.brown[800],
+                ),
+              ],
             ),
+            Container(
+              width: SizeConfig.safeBlockHorizontal * 3,
+              height: SizeConfig.blockSizeVertical * 22,
+              color: Colors.brown[800],
+            ),
+          ],
+        ),
+        Container(
+          height: SizeConfig.blockSizeVertical * 2,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                fit: BoxFit.fill, image: AssetImage("assets/background.jpeg")),
           ),
-        ],
-      );
-    }
+        ),
+      ],
+    );
   }
 }

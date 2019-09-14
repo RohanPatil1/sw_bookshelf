@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
-class bookServer{
+import 'package:provider/provider.dart';
 
- static  List<Map<String,String>> getData(){
+enum LoadingState {none,loading}
 
+class bookServer with ChangeNotifier{
+
+  bookServer(){ getData();}
+
+   LoadingState state = LoadingState.loading;
+   List<Map<String,String>> dataList = [];
+  _changeLoadingState(LoadingState NewState){
+   state = NewState;
+   notifyListeners();
+   print("executed");
+  }
+
+   Future<List<Map<String,String>>> getData()async{
+    _changeLoadingState(LoadingState.loading);
    List<Map<String,String>> list= [
     {
       'subName': 'Mathematics',
@@ -35,7 +49,13 @@ class bookServer{
       'image': 'assets/bookcover.jpg',
     }
   ];
-   Future.delayed(Duration(seconds: 4));
-   return list;
+  
+  await Future.delayed(Duration(seconds: 4));
+
+    dataList=list;
+
+   _changeLoadingState(LoadingState.none);
+
+   return dataList;
  }
 }
